@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_page.dart';
+import 'package:pharmacy_app/screens/home/orders/orders_page.dart';
 
 class TabView extends StatefulWidget {
   const TabView({super.key});
@@ -30,12 +32,8 @@ class _TabViewState extends State<TabView> {
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               children: const [
-                Center(
-                  child: Text('orders'),
-                ),
-                Center(
-                  child: Text('inventory'),
-                ),
+                OrdersPage(),
+                DrugsPage(),
               ],
             ),
             bottomNavigationBar: BottomNavigationBar(

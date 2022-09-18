@@ -19,3 +19,9 @@ ButtonStyle get elevatedButtonStyle => TextButton.styleFrom(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
+
+TextStyle get labelTextStyle => const TextStyle(
+      color: Colors.grey,
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
+    );
