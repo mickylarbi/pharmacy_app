@@ -3,7 +3,6 @@ import 'package:pharmacy_app/firebase/auth.dart';
 import 'package:pharmacy_app/screens/home/tab_view.dart';
 import 'package:pharmacy_app/utils/constants.dart';
 import 'package:pharmacy_app/utils/dialogs.dart';
-import 'package:pharmacy_app/utils/functions.dart';
 
 class AuthScreen extends StatefulWidget {
   final AuthType authType;
@@ -22,13 +21,13 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  // final AuthService _auth = AuthService();
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).unfocus();
+        FocusManager.instance.primaryFocus!.unfocus();
       },
       child: Scaffold(
         body: SafeArea(
@@ -59,43 +58,38 @@ class _AuthScreenState extends State<AuthScreen> {
                 ElevatedButton(
                   style: elevatedButtonStyle,
                   onPressed: () {
-                    // if (_emailController.text.trim().isEmpty ||
-                    //     _passwordController.text.isEmpty ||
-                    //     (widget.authType == AuthType.signUp &&
-                    //         _confirmPasswordController.text.isEmpty)) {
-                    //   showAlertDialog(context,
-                    //       message: 'One or more fields are empty');
-                    // } else if (!_emailController.text.trim().contains(RegExp(
-                    //     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
-                    //   showAlertDialog(context,
-                    //       message: 'Email address is invalid');
-                    // } else if (widget.authType == AuthType.signUp &&
-                    //     (_passwordController.text !=
-                    //         _confirmPasswordController.text)) {
-                    //   showAlertDialog(context,
-                    //       message: 'Passwords do not match');
-                    // } else if (_passwordController.text.length < 6) {
-                    //   showAlertDialog(context,
-                    //       message:
-                    //           'Password should not be less than 6 characters');
-                    // } else {
-                    //   if (widget.authType == AuthType.login) {
-                    //     _auth.signIn(
-                    //       context,
-                    //       email: _emailController.text.trim(),
-                    //       password: _passwordController.text,
-                    //     );
-                    //   } else {
-                    //     _auth.signUp(context,
-                    //         email: _emailController.text.trim(),
-                    //         password: _passwordController.text);
-                    //   }
-                    // }
-
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => TabView()),
-                        (route) => false);
+                    if (_emailController.text.trim().isEmpty ||
+                        _passwordController.text.isEmpty ||
+                        (widget.authType == AuthType.signUp &&
+                            _confirmPasswordController.text.isEmpty)) {
+                      showAlertDialog(context,
+                          message: 'One or more fields are empty');
+                    } else if (!_emailController.text.trim().contains(RegExp(
+                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
+                      showAlertDialog(context,
+                          message: 'Email address is invalid');
+                    } else if (widget.authType == AuthType.signUp &&
+                        (_passwordController.text !=
+                            _confirmPasswordController.text)) {
+                      showAlertDialog(context,
+                          message: 'Passwords do not match');
+                    } else if (_passwordController.text.length < 6) {
+                      showAlertDialog(context,
+                          message:
+                              'Password should not be less than 6 characters');
+                    } else {
+                      if (widget.authType == AuthType.login) {
+                        _auth.signIn(
+                          context,
+                          email: _emailController.text.trim(),
+                          password: _passwordController.text,
+                        );
+                      } else {
+                        _auth.signUp(context,
+                            email: _emailController.text.trim(),
+                            password: _passwordController.text);
+                      }
+                    }
                   },
                   child: Text(
                       widget.authType == AuthType.login ? 'Login' : 'Sign Up'),
@@ -133,13 +127,13 @@ enum AuthType { login, signUp }
 
 class AuthWidget extends StatelessWidget {
   AuthWidget({Key? key}) : super(key: key);
-  // final AuthService _authService = AuthService();
+  final AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
-    // if (_authService.currentUser == null) {
-    //   return const AuthScreen(authType: AuthType.login);
-    // }
+    if (_authService.currentUser == null) {
+      return const AuthScreen(authType: AuthType.login);
+    }
 
     return const TabView();
   }

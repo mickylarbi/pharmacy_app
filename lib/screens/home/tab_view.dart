@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:pharmacy_app/screens/home/drugs/drugs_page.dart';
+import 'package:pharmacy_app/firebase/auth.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_search_delegate.dart';
 import 'package:pharmacy_app/screens/home/orders/orders_page.dart';
+import 'package:pharmacy_app/utils/constants.dart';
 
 class TabView extends StatefulWidget {
   const TabView({super.key});
@@ -25,15 +28,29 @@ class _TabViewState extends State<TabView> {
               title: Text(value == 0 ? 'Orders' : 'Inventory'),
               actions: [
                 if (value == 1)
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+                  IconButton(
+                      onPressed: () {
+                        showSearch(
+                            context: context, delegate: DrugsSearchDelegate());
+                      },
+                      icon: const Icon(Icons.search))
               ],
             ),
             body: PageView(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
-              children: const [
-                OrdersPage(),
-                DrugsPage(),
+              children: [
+                const OrdersPage(),
+                const DrugsPage(),
+                const Center(child: Text('Items added to cart will show here')),
+                Center(
+                    child: TextButton(
+                        style: translucentButtonStyle,
+                        onPressed: () {
+                          AuthService auth = AuthService();
+                          auth.signOut(context);
+                        },
+                        child: Text('Sign out')))
               ],
             ),
             bottomNavigationBar: BottomNavigationBar(
@@ -49,6 +66,9 @@ class _TabViewState extends State<TabView> {
               items: const [
                 BottomNavigationBarItem(icon: Icon(Icons.list), label: ''),
                 BottomNavigationBarItem(icon: Icon(Icons.inventory), label: ''),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.shopping_cart), label: ''),
+                BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
               ],
             ),
           );

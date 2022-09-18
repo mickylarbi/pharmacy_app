@@ -11,7 +11,7 @@ class Src extends StatelessWidget {
     return MaterialApp(
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
-      home: const AuthScreen(authType: AuthType.login),
+      home: AuthWidget(),
     );
   }
 }
