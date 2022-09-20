@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmacy_app/models/drug.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
@@ -24,7 +23,29 @@ class _DrugDetailsState extends State<DrugDetails> {
                 expandedHeight: kScreenWidth(context),
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: DrugImageWidget(drugId: widget.drug.id!),
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      DrugImageWidget(
+                        drugId: widget.drug.id!,
+                        borderRadius: 0,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.black.withOpacity(.55),
+                              Colors.black.withOpacity(.0),
+                              Colors.black.withOpacity(.0),
+                              Colors.black.withOpacity(.0),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               SliverToBoxAdapter(
@@ -85,43 +106,3 @@ class _DrugDetailsState extends State<DrugDetails> {
     );
   }
 }
-
-
-// ListView(
-//         padding: const EdgeInsets.all(20),
-//         children: [
-//           const FlutterLogo(size: 200),
-//           const SizedBox(height: 50),
-//           Text(
-//             'Brand name',
-//             style: labelTextStyle,
-//           ),
-//           Text(widget.drug!.brandName!),
-//           const SizedBox(height: 20),
-//           Text(
-//             'General name',
-//             style: labelTextStyle,
-//           ),
-//           Text(widget.drug!.genericName!),
-//           const SizedBox(height: 20),
-//           Text(
-//             'Class',
-//             style: labelTextStyle,
-//           ),
-//           Text(widget.drug!.group!),
-//           const SizedBox(height: 20),
-//           Text(
-//             'Price',
-//             style: labelTextStyle,
-//           ),
-//           Text('GH¢ ${widget.drug!.price!.toStringAsFixed(2)}'),
-//           const SizedBox(height: 20),
-//           Text(
-//             'Other details',
-//             style: labelTextStyle,
-//           ),
-//           Text(widget.drug!.otherDetails!),
-//           const SizedBox(height: 20),
-//         ],
-//       ),
-   

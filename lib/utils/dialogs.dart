@@ -77,7 +77,7 @@ void showConfirmationDialog(BuildContext context,
         ),
       ],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      actionsPadding: const EdgeInsets.symmetric(horizontal: 14),
+      actionsPadding: const EdgeInsets.all(14),
     ),
   );
 }
@@ -96,6 +96,41 @@ void showCustomBottomSheet(BuildContext context, List<Widget> children) {
           child: Column(mainAxisSize: MainAxisSize.min, children: children),
         ),
       ),
+    ),
+  );
+}
+
+showEditDialog(BuildContext context, String hintText, String initialText) {
+  String text = '';
+
+  return showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(hintText),
+      content: TextFormField(
+        initialValue: initialText,
+        onChanged: (value) {
+          text = value;
+        },
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          style: translucentButtonStyle,
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context, text);
+          },
+          style: elevatedButtonStyle,
+          child: const Text('Save'),
+        ),
+      ],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      actionsPadding: const EdgeInsets.all(14),
     ),
   );
 }

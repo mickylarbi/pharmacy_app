@@ -7,3 +7,4 @@ Future<T?> navigate<T extends Object?>(
 
 List<String> hiredServices = [];
 int pagesToPop = 0;
+

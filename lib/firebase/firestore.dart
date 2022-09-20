@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pharmacy_app/models/order.dart';
 import 'package:pharmacy_app/models/patient.dart';
+import 'package:pharmacy_app/models/pharmacy.dart';
 
 class FirestoreService {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -28,7 +29,14 @@ class FirestoreService {
   CollectionReference<Map<String, dynamic>> get adminsCollection =>
       instance.collection('admins');
 
+  Query<Map<String, dynamic>> get pharmaciesCollection =>
+      adminsCollection.where('adminRole', isEqualTo: 'pharmacy');
+
+  DocumentReference<Map<String, dynamic>> pharmacyDocument([String? id]) => adminsCollection.doc(id??auth.currentUser!.uid);
+
   // PHARMACY
+
+
 
   CollectionReference<Map<String, dynamic>> get drugsCollection =>
       instance.collection('drugs');

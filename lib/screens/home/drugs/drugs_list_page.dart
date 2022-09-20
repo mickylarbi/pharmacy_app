@@ -26,8 +26,7 @@ class _DrugsListPageState extends State<DrugsPage> {
         if (snapshot.hasError) {
           return Center(
             child: TextButton(
-              onPressed: () {
-              },
+              onPressed: () {},
               child: const Text('Reload'),
             ),
           );
@@ -39,18 +38,25 @@ class _DrugsListPageState extends State<DrugsPage> {
           );
         }
 
-        List<Drug> drugsList = snapshot.data!.docs
-            .map((e) => Drug.fromFirestore(e.data(), e.id))
-            .toList();
+        drugsListNotifier.value = [
+          ...snapshot.data!.docs
+              .map((e) => Drug.fromFirestore(e.data(), e.id))
+              .toList()
+        ];
 
-        return ListView.separated(
-          padding: const EdgeInsets.all(20),
-          itemCount: drugsList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return DrugCard(drug: drugsList[index]);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return const SizedBox(height: 20);
+        return ValueListenableBuilder(
+          valueListenable: drugsListNotifier,
+          builder: (context, value, child) {
+            return ListView.separated(
+              padding: const EdgeInsets.all(20),
+              itemCount: drugsListNotifier.value.length,
+              itemBuilder: (BuildContext context, int index) {
+                return DrugCard(drug: drugsListNotifier.value[index]);
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(height: 20);
+              },
+            );
           },
         );
       },
@@ -176,7 +182,7 @@ class DrugImageWidget extends StatelessWidget {
                   imageUrl: snapshot.data!,
                   height: height,
                   width: width,
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.cover,
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       Center(
                     child: CircularProgressIndicator.adaptive(
@@ -201,3 +207,5 @@ class DrugImageWidget extends StatelessWidget {
     );
   }
 }
+
+ValueNotifier<List<Drug>> drugsListNotifier = ValueNotifier([]);
