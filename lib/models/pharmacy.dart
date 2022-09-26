@@ -1,4 +1,3 @@
-
 class Pharmacy {
   String? id;
   String? name;
@@ -6,12 +5,10 @@ class Pharmacy {
 
   Pharmacy({id, this.name, this.phone});
 
-  Pharmacy fromFirestore(Map<String, dynamic> map, String aId) {
+  Pharmacy.fromFirestore(Map<String, dynamic> map, String aId) {
     id = aId;
     name = map['name'];
     phone = map['phone'];
-
-    return this;
   }
 
   Map<String, dynamic> toMap() {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmacy_app/firebase/firestore.dart';
 import 'package:pharmacy_app/firebase/storage.dart';
 import 'package:pharmacy_app/models/drug.dart';
+import 'package:pharmacy_app/screens/home/checkout/checkout_page.dart';
 import 'package:pharmacy_app/screens/home/drugs/drug_details_screen.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_search_delegate.dart';
 import 'package:pharmacy_app/utils/functions.dart';
@@ -47,16 +48,22 @@ class _DrugsListPageState extends State<DrugsPage> {
         return ValueListenableBuilder(
           valueListenable: drugsListNotifier,
           builder: (context, value, child) {
-            return ListView.separated(
-              padding: const EdgeInsets.all(20),
-              itemCount: drugsListNotifier.value.length,
-              itemBuilder: (BuildContext context, int index) {
-                return DrugCard(drug: drugsListNotifier.value[index]);
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(height: 20);
-              },
-            );
+            return drugsListNotifier.value.isEmpty
+                ? const Center(
+                    child: Text(
+                    'No drugs to show',
+                    style: TextStyle(color: Colors.grey),
+                  ))
+                : ListView.separated(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: drugsListNotifier.value.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return DrugCard(drug: drugsListNotifier.value[index]);
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(height: 20);
+                    },
+                  );
           },
         );
       },
@@ -74,7 +81,7 @@ class DrugCard extends StatelessWidget {
       onTap: () {
         navigate(
             context,
-            DrugDetails(
+            DrugDetailsScreen(
               drug: drug,
             ));
       },
@@ -128,7 +135,33 @@ class DrugCard extends StatelessWidget {
                     clipBehavior: Clip.none,
                     child: Text('GH¢ ${drug.price!.toStringAsFixed(2)}')),
                 const Spacer(),
-                TextButton(onPressed: () {}, child: const Text('Add to cart')),
+                drug.quantityInStock == 0
+                    ? const Text(
+                        'Out of stock',
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    : ValueListenableBuilder<Map<Drug, int>>(
+                        valueListenable: cart,
+                        builder: (context, value, child) {
+                          return TextButton(
+                              onPressed: () {
+                                if (value.keys.contains(drug)) {
+                                  deleteFromCart(drug);
+                                } else {
+                                  addToCart(drug);
+                                }
+                              },
+                              child: Text(
+                                value.keys.contains(drug)
+                                    ? 'Remove from cart'
+                                    : 'Add to cart',
+                                style: TextStyle(
+                                  color: value.keys.contains(drug)
+                                      ? Colors.orange
+                                      : null,
+                                ),
+                              ));
+                        }),
               ],
             )
           ],

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacy_app/firebase/auth.dart';
 import 'package:pharmacy_app/models/drug.dart';
+import 'package:pharmacy_app/models/order.dart';
+import 'package:pharmacy_app/screens/home/checkout/checkout_page.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_search_delegate.dart';
-import 'package:pharmacy_app/screens/home/orders/orders_page.dart';
+import 'package:pharmacy_app/screens/home/orders/order_history_screen.dart';
+import 'package:pharmacy_app/screens/home/orders/orders_list_page.dart';
 import 'package:pharmacy_app/screens/home/profile/profile_screen.dart';
 import 'package:pharmacy_app/utils/constants.dart';
+import 'package:pharmacy_app/utils/dialogs.dart';
+import 'package:pharmacy_app/utils/functions.dart';
 
 class TabView extends StatefulWidget {
   const TabView({super.key});
@@ -15,14 +20,14 @@ class TabView extends StatefulWidget {
 }
 
 class _TabViewState extends State<TabView> {
-  final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
-  final PageController _pageController = PageController();
+  final ValueNotifier<int> _currentIndex = ValueNotifier<int>(1);
+  final PageController _pageController = PageController(initialPage: 1);
 
   @override
   void initState() {
     super.initState();
 
-    drugsListNotifier == ValueNotifier([]);
+    drugsListNotifier = ValueNotifier([]);
   }
 
   @override
@@ -35,6 +40,20 @@ class _TabViewState extends State<TabView> {
               title: Text(appBarTitle()),
               centerTitle: false,
               actions: [
+                if (value == 0)
+                  IconButton(
+                    onPressed: () {
+                      navigate(
+                          context,
+                          OrderHistoryScreen(
+                              ordersList: ordersList
+                                  .where((element) =>
+                                      element.status == OrderStatus.canceled ||
+                                      element.status == OrderStatus.delivered)
+                                  .toList()));
+                    },
+                    icon: const Icon(Icons.history),
+                  ),
                 if (value == 1)
                   IconButton(
                     onPressed: () {
@@ -110,15 +129,42 @@ class _TabViewState extends State<TabView> {
                       )
                     ],
                   ),
+                if (value == 2)
+                  ValueListenableBuilder<Map<Drug, int>>(
+                    valueListenable: cart,
+                    builder: (context, value, child) {
+                      return value.isEmpty
+                          ? const SizedBox()
+                          : TextButton.icon(
+                              onPressed: () {
+                                showConfirmationDialog(
+                                  context,
+                                  message: 'Clear cart?',
+                                  confirmFunction: () {
+                                    cart.value = {};
+                                  },
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.remove_shopping_cart_rounded,
+                                color: Colors.red,
+                              ),
+                              label: const Text(
+                                'Clear cart',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                    },
+                  ),
               ],
             ),
             body: PageView(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               children: const [
-                OrdersPage(),
+                OrdersListPage(),
                 DrugsPage(),
-                Center(child: Text('Items added to cart will show here')),
+                CheckoutPage(),
                 ProfileScreen()
               ],
             ),

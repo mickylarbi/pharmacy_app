@@ -71,15 +71,21 @@ class DrugsSearchDelegate extends SearchDelegate {
     temp.sort((a, b) => a.group!.compareTo(b.group!));
     drugsList.addAll(temp.where((element) => !drugsList.contains(element)));
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(20),
-      itemCount: drugsList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return DrugCard(drug: drugsList[index]);
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return const SizedBox(height: 20);
-      },
-    );
+    return drugsList.isEmpty
+        ? const Center(
+            child: Text(
+            'No drugs to show',
+            style: TextStyle(color: Colors.grey),
+          ))
+        : ListView.separated(
+            padding: const EdgeInsets.all(20),
+            itemCount: drugsList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return DrugCard(drug: drugsList[index]);
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return const SizedBox(height: 20);
+            },
+          );
   }
 }

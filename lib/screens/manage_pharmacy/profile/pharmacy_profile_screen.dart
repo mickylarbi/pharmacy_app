@@ -6,20 +6,21 @@ import 'package:pharmacy_app/firebase/auth.dart';
 import 'package:pharmacy_app/firebase/firestore.dart';
 import 'package:pharmacy_app/firebase/storage.dart';
 import 'package:pharmacy_app/models/patient.dart';
+import 'package:pharmacy_app/models/pharmacy.dart';
 import 'package:pharmacy_app/screens/home/profile/change_profile_picture_screen.dart';
 import 'package:pharmacy_app/screens/home/profile/register_pharmacy_screen.dart';
 import 'package:pharmacy_app/utils/constants.dart';
 import 'package:pharmacy_app/utils/dialogs.dart';
 import 'package:pharmacy_app/utils/functions.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class PharmacyProfileScreen extends StatefulWidget {
+  const PharmacyProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<PharmacyProfileScreen> createState() => _PharmacyProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
   StorageService storage = StorageService();
   AuthService auth = AuthService();
   FirestoreService db = FirestoreService();
@@ -76,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 30),
         StatefulBuilder(builder: (context, setState) {
           return FutureBuilder(
-              future: db.patientDocument().get(),
+              future: db.pharmacyDocument().get(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Column(
@@ -97,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return Container();
                   }
 
-                  Patient? patient = Patient.fromFirestore(
+                  Pharmacy patient = Pharmacy.fromFirestore(
                       snapshot.data!.data()!, snapshot.data!.id);
 
                   return ListView(
@@ -106,43 +107,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
                       ListTile(
-                        title: Text(patient.firstName!),
+                        title: Text(patient.name!),
                         trailing: const Icon(Icons.edit),
                         onTap: () async {
                           String? result = await showEditDialog(
-                              context, 'First name', patient.firstName!);
+                              context, 'Name', patient.name!);
 
                           if (result != null) {
                             showLoadingDialog(context);
-                            db.patientDocument()
-                                .update({'firstName': result})
-                                .timeout(ktimeout)
-                                .then((value) {
-                                  Navigator.pop(context);
-                                  setState(() {});
-                                })
-                                .onError((error, stackTrace) {
-                                  Navigator.pop(context);
-                                  showAlertDialog(context);
-                                });
-                          }
-                        },
-                        tileColor: Colors.grey[800],
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14)),
-                      ),
-                      const SizedBox(height: 20),
-                      ListTile(
-                        title: Text(patient.surname!),
-                        trailing: const Icon(Icons.edit),
-                        onTap: () async {
-                          String? result = await showEditDialog(
-                              context, 'Surname', patient.surname!);
-
-                          if (result != null) {
-                            showLoadingDialog(context);
-                            db.patientDocument()
-                                .update({'surname': result})
+                            db
+                                .patientDocument()
+                                .update({'name': result})
                                 .timeout(ktimeout)
                                 .then((value) {
                                   Navigator.pop(context);
@@ -168,7 +143,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                           if (result != null) {
                             showLoadingDialog(context);
-                            db.patientDocument()
+                            db
+                                .patientDocument()
                                 .update({'phone': result})
                                 .timeout(ktimeout)
                                 .then((value) {
@@ -185,26 +161,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14)),
                       ),
-                      const SizedBox(height: 50),
-                      TextButton.icon(
-                        onPressed: () {
-                          navigate(
-                              context,
-                              RegisterPharmacyScreen(
-                                name: patient.name,
-                                phone: patient.phone!,
-                              ));
-                        },
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.all(14),
-                          backgroundColor: Colors.yellow.withOpacity(.3),
-                          foregroundColor: Colors.yellow,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                        icon: const Icon(Icons.medical_services),
-                        label: const Text('Register pharmacy'),
-                      ),
                     ],
                   );
                 }
@@ -214,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               });
         }),
-        const SizedBox(height: 20),
+        const SizedBox(height: 50),
         TextButton.icon(
           onPressed: () {
             auth.signOut(context);
@@ -230,79 +186,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           label: const Text('Sign out'),
         ),
       ],
-    );
-  }
-}
-
-
-class ProfileImageWidget extends StatelessWidget {
-  ProfileImageWidget({
-    Key? key,
-    this.patientId,
-    required this.height,
-    required this.width,
-    this.borderRadius,
-  }) : super(key: key);
-
-  StorageService storage = StorageService();
-  final String? patientId;
-  final double height;
-  final double width;
-  final BorderRadius? borderRadius;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: borderRadius ?? BorderRadius.circular(20),
-      child: Container(
-        height: height,
-        width: width,
-        alignment: Alignment.center,
-        color: Colors.grey.withOpacity(.1),
-        child: StatefulBuilder(builder: (context, setState) {
-          return FutureBuilder<String>(
-            future: storage.profileImageDownloadUrl(patientId),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return GestureDetector(
-                  onTap: () async {
-                    setState(() {});
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text(
-                        'Tap to reload',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      Icon(
-                        Icons.refresh,
-                        color: Colors.grey,
-                      )
-                    ],
-                  ),
-                );
-              }
-              if (snapshot.connectionState == ConnectionState.done) {
-                return CachedNetworkImage(
-                  imageUrl: snapshot.data!,
-                  height: height,
-                  width: width,
-                  fit: BoxFit.cover,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      Center(
-                    child: CircularProgressIndicator.adaptive(
-                        value: downloadProgress.progress),
-                  ),
-                  errorWidget: (context, url, error) =>
-                      const Center(child: Icon(Icons.person)),
-                );
-              }
-              return const Center(child: CircularProgressIndicator.adaptive());
-            },
-          );
-        }),
-      ),
     );
   }
 }

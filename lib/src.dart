@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pharmacy_app/main.dart';
-import 'package:pharmacy_app/screens/auth_screen.dart';
-import 'package:pharmacy_app/screens/home/tab_view.dart';
+import 'package:pharmacy_app/screens/splash_screen.dart';
 
 class Src extends StatelessWidget {
   const Src({super.key});
@@ -11,7 +9,7 @@ class Src extends StatelessWidget {
     return MaterialApp(
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
-      home: AuthWidget(),
+      home: const SplashScreen(),
     );
   }
 }

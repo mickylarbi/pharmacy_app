@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacy_app/models/drug.dart';
+import 'package:pharmacy_app/screens/home/checkout/checkout_page.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
 import 'package:pharmacy_app/utils/constants.dart';
 
-class DrugDetails extends StatefulWidget {
+class DrugDetailsScreen extends StatelessWidget {
   final Drug drug;
-  const DrugDetails({super.key, required this.drug});
+  const DrugDetailsScreen({super.key, required this.drug});
 
-  @override
-  State<DrugDetails> createState() => _DrugDetailsState();
-}
-
-class _DrugDetailsState extends State<DrugDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +23,7 @@ class _DrugDetailsState extends State<DrugDetails> {
                     fit: StackFit.expand,
                     children: [
                       DrugImageWidget(
-                        drugId: widget.drug.id!,
+                        drugId: drug.id!,
                         borderRadius: 0,
                       ),
                       Container(
@@ -58,31 +54,31 @@ class _DrugDetailsState extends State<DrugDetails> {
                         'Brand name',
                         style: labelTextStyle,
                       ),
-                      Text(widget.drug.brandName!),
+                      Text(drug.brandName!),
                       const SizedBox(height: 20),
                       Text(
                         'General name',
                         style: labelTextStyle,
                       ),
-                      Text(widget.drug.genericName!),
+                      Text(drug.genericName!),
                       const SizedBox(height: 20),
                       Text(
                         'Class',
                         style: labelTextStyle,
                       ),
-                      Text(widget.drug.group!),
+                      Text(drug.group!),
                       const SizedBox(height: 20),
                       Text(
                         'Price',
                         style: labelTextStyle,
                       ),
-                      Text('GH¢ ${widget.drug.price!.toStringAsFixed(2)}'),
+                      Text('GH¢ ${drug.price!.toStringAsFixed(2)}'),
                       const SizedBox(height: 20),
                       Text(
                         'Other details',
                         style: labelTextStyle,
                       ),
-                      Text(widget.drug.otherDetails!),
+                      Text(drug.otherDetails!),
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -90,17 +86,42 @@ class _DrugDetailsState extends State<DrugDetails> {
               )
             ],
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 30),
-              child: ElevatedButton.icon(
-                  onPressed: () {},
-                  style: elevatedButtonStyle,
-                  icon: const Icon(Icons.shopping_cart),
-                  label: const Text('Add to cart')),
-            ),
-          )
+          if (drug.quantityInStock! > 0)
+            ValueListenableBuilder<Map<Drug, int>>(
+                valueListenable: cart,
+                builder: (context, value, child) {
+                  Color? color =
+                      value.keys.contains(drug) ? Colors.orange : null;
+                  return Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 30),
+                      child: ElevatedButton.icon(
+                          onPressed: () {
+                            if (value.keys.contains(drug)) {
+                              deleteFromCart(drug);
+                            } else {
+                              addToCart(drug);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 14),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            backgroundColor: color,
+                          ),
+                          icon: Icon(
+                            value.keys.contains(drug)
+                                ? Icons.delete
+                                : Icons.add_shopping_cart,
+                          ),
+                          label: Text(value.keys.contains(drug)
+                              ? 'Remove from cart'
+                              : 'Add to cart')),
+                    ),
+                  );
+                })
         ],
       ),
     );

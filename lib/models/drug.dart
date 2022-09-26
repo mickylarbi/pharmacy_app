@@ -1,8 +1,4 @@
-import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
-
-// import 'package:firebase_auth/firebase_auth.dart';
 
 class Drug {
   String? id;
@@ -11,7 +7,7 @@ class Drug {
   String? genericName;
   String? brandName;
   double? price;
-  bool? inStock;
+  int? quantityInStock;
   String? otherDetails;
 
   Drug({
@@ -21,7 +17,7 @@ class Drug {
     this.genericName,
     this.brandName,
     this.price,
-    this.inStock,
+    this.quantityInStock,
     this.otherDetails,
   });
 
@@ -32,7 +28,7 @@ class Drug {
     genericName = map['genericName'];
     brandName = map['brandName'];
     price = map['price'].toDouble();
-    inStock = map['qtyInStock'] ?? true;
+    quantityInStock = map['quantityInStock'].toInt();
     otherDetails = map['otherDetails'];
   }
 
@@ -42,28 +38,27 @@ class Drug {
         'genericName': genericName,
         'brandName': brandName,
         'price': price,
+        'quantityInStock': quantityInStock,
         'otherDetails': otherDetails,
-      };
+  };
 
   @override
   bool operator ==(other) =>
       other is Drug &&
-      pharmacyId == other.pharmacyId &&
       group == other.group &&
       genericName == other.genericName &&
       brandName == other.brandName &&
       price == other.price &&
-      inStock == other.inStock &&
+      quantityInStock == other.quantityInStock &&
       otherDetails == other.otherDetails;
 
   @override
   int get hashCode => Object.hash(
-        pharmacyId,
         group,
         genericName,
         brandName,
         price,
-        inStock,
+        quantityInStock,
         otherDetails,
       );
 }

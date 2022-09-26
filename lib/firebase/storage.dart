@@ -24,4 +24,9 @@ class StorageService {
 
   Future<String> drugImageDownloadUrl(String id) =>
       drugsImagesRef.child(id).getDownloadURL();
+
+       UploadTask uploadDrugImage({required XFile picture, required String id}) =>
+      drugsImagesRef.child(id).putFile(File(picture.path));
+
+  deleteDrug({required String id}) => drugsImagesRef.child(id).delete();
 }

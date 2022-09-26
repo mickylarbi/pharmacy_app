@@ -6,74 +6,73 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Order {
   String? id;
+  String? patientId;
   Map<String, dynamic>? cart;
   String? locationString;
-  LatLng? locationGeo;
+  GeoPoint? locationGeo;
   double? totalPrice;
   OrderStatus? status;
-  bool? confirmDelivery;
   DateTime? dateTime;
   List<String>? pharmacyIds;
 
   Order({
     this.id,
+    this.patientId,
     this.cart,
-    this.pharmacyIds,
     this.locationString,
     this.locationGeo,
     this.totalPrice,
     this.status,
-    this.confirmDelivery,
     this.dateTime,
+    this.pharmacyIds,
   });
 
   Order.fromFirestore(Map<String, dynamic> map, String oId) {
     id = oId;
+    patientId = map['patientId'];
     cart = map['cart'];
     locationString = map['locationString'];
-    locationGeo =
-        LatLng(map['locationGeo'].latitude, map['locationGeo'].latitude);
+    locationGeo = map['locationGeo'];
     totalPrice = map['totalPrice'].toDouble();
     status = OrderStatus.values[map['status']];
-    confirmDelivery = map['confirmDelivery'];
     dateTime = DateTime.fromMillisecondsSinceEpoch(
         (map['dateTime'] as Timestamp).millisecondsSinceEpoch);
+    pharmacyIds = map['pharmacyIds'];
   }
 
   Map<String, dynamic> toMap() => {
         'patientId': FirebaseAuth.instance.currentUser!.uid,
         'cart': cart,
-        'pharmacyIds': pharmacyIds,
         'locationString': locationString,
         'locationGeo': GeoPoint(locationGeo!.latitude, locationGeo!.longitude),
         'totalPrice': totalPrice,
         'status': status!.index,
-        'confirmDelivery': confirmDelivery,
         'dateTime': dateTime,
+        'pharmacyIds': pharmacyIds,
       };
 
   @override
   bool operator ==(other) =>
       other is Order &&
+      patientId == other.patientId &&
       cart == other.cart &&
-      pharmacyIds == other.pharmacyIds &&
       locationString == other.locationString &&
       locationGeo == other.locationGeo &&
       totalPrice == other.totalPrice &&
       status == other.status &&
       dateTime == other.dateTime &&
-      confirmDelivery == other.confirmDelivery;
+      pharmacyIds == other.pharmacyIds;
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
+        patientId,
         cart,
-        hashList(pharmacyIds),
         locationString,
         locationGeo,
         totalPrice,
         status,
-        confirmDelivery,
         dateTime,
+        Object.hashAll(pharmacyIds!.where((element) => true)),
       );
 }
 

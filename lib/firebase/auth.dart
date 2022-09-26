@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmacy_app/firebase/firestore.dart';
 import 'package:pharmacy_app/screens/auth_screen.dart';
+import 'package:pharmacy_app/screens/home/onboarding_screen.dart';
 import 'package:pharmacy_app/screens/home/tab_view.dart';
 import 'package:pharmacy_app/screens/manage_pharmacy/pharmacy_tab_view.dart';
 import 'package:pharmacy_app/utils/constants.dart';
@@ -91,13 +92,26 @@ class AuthService {
               MaterialPageRoute(builder: (context) => const PharmacyTabView()),
               (route) => false);
         } else {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const TabView()),
-              (route) => false);
+          db.patientDocument().get().timeout(ktimeout).then((value) {
+            if (value.data() != null) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TabView()),
+                  (route) => false);
+            } else {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const OnboardingScreen()),
+                  (route) => false);
+            }
+          }).onError((error, stackTrace) {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => ErrorScreen()),
+                (route) => false);
+          });
         }
-
-        
       }).onError((error, stackTrace) {
         Navigator.pushAndRemoveUntil(
             context,

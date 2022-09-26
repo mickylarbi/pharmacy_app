@@ -61,7 +61,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     if (_emailController.text.trim().isEmpty ||
                         _passwordController.text.isEmpty ||
                         (widget.authType == AuthType.signUp &&
-                            _confirmPasswordController.text.isEmpty)) {
+                            _confirmPasswordController.text.trim().isEmpty)) {
                       showAlertDialog(context,
                           message: 'One or more fields are empty');
                     } else if (!_emailController.text.trim().contains(RegExp(
@@ -124,20 +124,6 @@ class _AuthScreenState extends State<AuthScreen> {
 }
 
 enum AuthType { login, signUp }
-
-class AuthWidget extends StatelessWidget {
-  AuthWidget({Key? key}) : super(key: key);
-  final AuthService _authService = AuthService();
-
-  @override
-  Widget build(BuildContext context) {
-    if (_authService.currentUser == null) {
-      return const AuthScreen(authType: AuthType.login);
-    }
-
-    return const TabView();
-  }
-}
 
 class CustomTextSpan extends StatelessWidget {
   final String firstText;
