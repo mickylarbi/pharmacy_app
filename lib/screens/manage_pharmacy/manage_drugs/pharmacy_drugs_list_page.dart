@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:pharmacy_app/firebase/firestore.dart';
 import 'package:pharmacy_app/firebase/storage.dart';
 import 'package:pharmacy_app/models/drug.dart';
-import 'package:pharmacy_app/models/pharmacy.dart';
-import 'package:pharmacy_app/screens/manage_pharmacy/manage_drugs/pharmacy_drugs_search_delegate.dart';
 import 'package:pharmacy_app/screens/manage_pharmacy/manage_drugs/edit_drug_details_screen.dart';
 import 'package:pharmacy_app/utils/functions.dart';
 
@@ -129,7 +127,7 @@ class DrugCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.blueGrey[50],
+          color: Colors.black38,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(

@@ -7,14 +7,14 @@ import 'package:pharmacy_app/screens/home/orders/orders_list_page.dart';
 import 'package:pharmacy_app/screens/manage_pharmacy/manage_orders/pharmacy_order_details_screen.dart';
 import 'package:pharmacy_app/utils/functions.dart';
 
-class OrdersListPage extends StatefulWidget {
-  const OrdersListPage({Key? key}) : super(key: key);
+class PharmacyOrdersListPage extends StatefulWidget {
+  const PharmacyOrdersListPage({Key? key}) : super(key: key);
 
   @override
-  State<OrdersListPage> createState() => _OrdersListPageState();
+  State<PharmacyOrdersListPage> createState() => _PharmacyOrdersListPageState();
 }
 
-class _OrdersListPageState extends State<OrdersListPage> {
+class _PharmacyOrdersListPageState extends State<PharmacyOrdersListPage> {
   ScrollController scrollController = ScrollController();
 
   FirestoreService db = FirestoreService();
@@ -38,7 +38,8 @@ class _OrdersListPageState extends State<OrdersListPage> {
         ),
         StatefulBuilder(builder: (context, setState) {
           return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              stream: db.myOrders
+              stream: db
+                  .myOrders(isPharmacy: true)
                   .where('status', isEqualTo: OrderStatus.pending.index)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -146,7 +147,8 @@ class _OrdersListPageState extends State<OrdersListPage> {
           height: 100,
           child: StatefulBuilder(builder: (context, setState) {
             return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                stream: db.myOrders
+                stream: db
+                    .myOrders(isPharmacy: true)
                     .where('status', isEqualTo: OrderStatus.enroute.index)
                     .snapshots(),
                 builder: (context, snapshot) {

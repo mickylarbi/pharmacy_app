@@ -117,7 +117,7 @@ class _PharmacyTabViewState extends State<PharmacyTabView> {
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: const [
-                  OrdersListPage(),
+                  PharmacyOrdersListPage(),
                   PharmacyDrugsListPage(),
                   PharmacyProfileScreen()
                 ]),

@@ -18,7 +18,7 @@ class OrderHistoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('History')),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: db.myOrders.snapshots(),
+          stream: db.myOrders(isPharmacy: true).snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Center(child: Icon(Icons.error_rounded));
@@ -36,7 +36,7 @@ class OrderHistoryScreen extends StatelessWidget {
                 .toList();
 
             return ListView.separated(
-              padding: const EdgeInsets.fromLTRB(36, 100, 36, 50),
+              padding: const EdgeInsets.all(24),
               itemCount: ordersList.length,
               itemBuilder: (BuildContext context, int index) => GestureDetector(
                   onTap: () {

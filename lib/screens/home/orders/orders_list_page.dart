@@ -14,7 +14,7 @@ class OrdersListPage extends StatelessWidget {
     FirestoreService db = FirestoreService();
 
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: db.myOrders.snapshots(),
+        stream: db.myOrders().snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Icon(Icons.error_rounded));

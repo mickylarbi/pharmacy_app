@@ -37,7 +37,8 @@ class Order {
     status = OrderStatus.values[map['status']];
     dateTime = DateTime.fromMillisecondsSinceEpoch(
         (map['dateTime'] as Timestamp).millisecondsSinceEpoch);
-    pharmacyIds = map['pharmacyIds'];
+    pharmacyIds =
+        (map['pharmacyIds'] as List<dynamic>).map((e) => e.toString()).toList();
   }
 
   Map<String, dynamic> toMap() => {

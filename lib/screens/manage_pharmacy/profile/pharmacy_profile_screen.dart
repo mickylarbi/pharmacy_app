@@ -98,7 +98,7 @@ class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
                     return Container();
                   }
 
-                  Pharmacy patient = Pharmacy.fromFirestore(
+                  Pharmacy pharmacy = Pharmacy.fromFirestore(
                       snapshot.data!.data()!, snapshot.data!.id);
 
                   return ListView(
@@ -107,11 +107,11 @@ class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
                       ListTile(
-                        title: Text(patient.name!),
+                        title: Text(pharmacy.name!),
                         trailing: const Icon(Icons.edit),
                         onTap: () async {
                           String? result = await showEditDialog(
-                              context, 'Name', patient.name!);
+                              context, 'Name', pharmacy.name!);
 
                           if (result != null) {
                             showLoadingDialog(context);
@@ -135,11 +135,11 @@ class _PharmacyProfileScreenState extends State<PharmacyProfileScreen> {
                       ),
                       const SizedBox(height: 20),
                       ListTile(
-                        title: Text(patient.phone!),
+                        title: Text(pharmacy.phone!),
                         trailing: const Icon(Icons.edit),
                         onTap: () async {
                           String? result = await showEditDialog(
-                              context, 'Phone', patient.phone!);
+                              context, 'Phone', pharmacy.phone!);
 
                           if (result != null) {
                             showLoadingDialog(context);
