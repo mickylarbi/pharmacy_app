@@ -3,10 +3,12 @@ import 'package:pharmacy_app/models/drug.dart';
 import 'package:pharmacy_app/models/order.dart';
 import 'package:pharmacy_app/screens/home/checkout/checkout_page.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
+import 'package:pharmacy_app/screens/home/drugs/nearby_pharmacies_screen.dart';
 import 'package:pharmacy_app/screens/home/drugs/pharmacies_list_page.dart';
 import 'package:pharmacy_app/screens/home/drugs/pharmacies_search_delegate.dart';
 import 'package:pharmacy_app/screens/home/orders/order_history_screen.dart';
 import 'package:pharmacy_app/screens/home/orders/orders_list_page.dart';
+import 'package:pharmacy_app/screens/home/orders/reviews_screen.dart';
 import 'package:pharmacy_app/screens/home/profile/profile_screen.dart';
 import 'package:pharmacy_app/utils/dialogs.dart';
 import 'package:pharmacy_app/utils/functions.dart';
@@ -42,6 +44,13 @@ class _TabViewState extends State<TabView> {
                 if (value == 0)
                   IconButton(
                     onPressed: () {
+                      navigate(context, const ReviewsScreen());
+                    },
+                    icon: const Icon(Icons.rate_review_sharp),
+                  ),
+                if (value == 0)
+                  IconButton(
+                    onPressed: () {
                       navigate(
                           context,
                           OrderHistoryScreen(
@@ -69,9 +78,13 @@ class _TabViewState extends State<TabView> {
                   ),
                 if (value == 1)
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (pharmaciesList.isNotEmpty) {
-                        
+                        navigate(
+                            context,
+                            NearbyPharmaciesScreen(
+                              currentLocation: await getCurrentLocation(),
+                            ));
                       } else {
                         showAlertDialog(context,
                             message: 'No pharmacies to show');

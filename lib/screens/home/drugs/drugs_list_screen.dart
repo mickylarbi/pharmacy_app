@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:pharmacy_app/firebase/storage.dart';
 import 'package:pharmacy_app/models/drug.dart';
 import 'package:pharmacy_app/models/pharmacy.dart';

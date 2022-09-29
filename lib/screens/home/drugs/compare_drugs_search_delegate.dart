@@ -55,21 +55,21 @@ class CompareDrugsSearchDelegate extends SearchDelegate {
 
   Widget body() {
     List<Drug> drugsList = [];
-    List<Drug> temp = (drugListGlobal ?? drugsListNotifier.value)
+    List<Drug> temp = (drugListGlobal)
         .where((element) =>
             element.brandName!.toLowerCase().contains(query.toLowerCase()))
         .toList();
     temp.sort((a, b) => a.brandName!.compareTo(b.brandName!));
     drugsList.addAll(temp);
 
-    temp = (drugListGlobal ?? drugsListNotifier.value)
+    temp = (drugListGlobal)
         .where((element) =>
             element.genericName!.toLowerCase().contains(query.toLowerCase()))
         .toList();
     temp.sort((a, b) => a.genericName!.compareTo(b.genericName!));
     drugsList.addAll(temp.where((element) => !drugsList.contains(element)));
 
-    temp = (drugListGlobal ?? drugsListNotifier.value)
+    temp = (drugListGlobal)
         .where((element) =>
             element.group!.toLowerCase().contains(query.toLowerCase()))
         .toList();
@@ -226,5 +226,3 @@ class CompareDrugCard extends StatelessWidget {
 }
 
 ValueNotifier<List<Drug>> compareDrugsNotifier = ValueNotifier([]);
-
-

@@ -82,6 +82,8 @@ class PharmaciesListPage extends StatelessWidget {
                           pharmaciesList.add(pharmacy);
                         }
 
+                        
+
                         return PharmacyCard(
                           pharmacy: pharmacy,
                           drugsList: drugsList
@@ -134,7 +136,7 @@ class PharmacyCard extends StatelessWidget {
               width: 100,
             ),
             const SizedBox(width: 20),
-            Text(pharmacy.name!),
+            Text(pharmacy.name??'No name'),
           ],
         ),
       ),
@@ -143,4 +145,4 @@ class PharmacyCard extends StatelessWidget {
 }
 
 List<Pharmacy> pharmaciesList = [];
-List<Drug>? drugListGlobal;
+List<Drug> drugListGlobal = [];

@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:pharmacy_app/firebase/firestore.dart';
 import 'package:pharmacy_app/models/drug.dart';
 import 'package:pharmacy_app/models/order.dart';
+import 'package:pharmacy_app/models/review.dart';
 import 'package:pharmacy_app/screens/home/drugs/drug_details_screen.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
 import 'package:pharmacy_app/utils/constants.dart';
@@ -22,9 +25,8 @@ class OrderDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(order.id!)),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 36),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
         children: [
-          const SizedBox(height: 100),
           const Text(
             'Date ordered:',
             style: TextStyle(color: Colors.grey),
@@ -149,7 +151,7 @@ class OrderDetailsScreen extends StatelessWidget {
           TextButton(
             style: TextButton.styleFrom(
                 fixedSize: Size(kScreenWidth(context) - 72, 48),
-                backgroundColor: Colors.pink.withOpacity(.1),
+                backgroundColor: Colors.pink.withOpacity(.2),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14))),
             onPressed: () async {
@@ -176,44 +178,153 @@ class OrderDetailsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 50),
           StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-              stream: db.orderDocument(order.id!).snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const SizedBox();
-                }
+            stream: db.orderDocument(order.id!).snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const SizedBox();
+              }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator.adaptive();
-                }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator.adaptive();
+              }
 
-                Order currentOrder = Order.fromFirestore(
-                    snapshot.data!.data()!, snapshot.data!.id);
+              Order currentOrder = Order.fromFirestore(
+                  snapshot.data!.data()!, snapshot.data!.id);
 
-                return currentOrder.status != OrderStatus.pending
-                    ? const SizedBox()
-                    : TextButton(
-                        style: TextButton.styleFrom(
-                            fixedSize: Size(kScreenWidth(context) - 72, 48),
-                            backgroundColor: Colors.red.withOpacity(.3),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14))),
-                        onPressed: () async {
-                          showConfirmationDialog(
-                            context,
-                            message: 'Cancel order?',
-                            confirmFunction: () {
-                              db.orderDocument(order.id!).update(
-                                  {'status': OrderStatus.canceled.index});
-                            },
-                          );
-                        },
-                        child: const Text(
-                          'Cancel order',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      );
-              }),
+              return statusActionButton(context, currentOrder);
+            },
+          ),
         ],
+      ),
+    );
+  }
+
+  statusActionButton(context, currentOrder) {
+    FirestoreService db = FirestoreService();
+
+    switch (currentOrder.status) {
+      case OrderStatus.pending:
+        return cancelButton(context, db);
+      case OrderStatus.enroute:
+        return deliveredButton(context, db);
+      default:
+        return const SizedBox();
+    }
+  }
+
+  TextButton deliveredButton(context, FirestoreService db) {
+    return TextButton(
+      style: TextButton.styleFrom(
+          fixedSize: Size(kScreenWidth(context) - 72, 48),
+          backgroundColor: Colors.green.withOpacity(.3),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+      onPressed: () async {
+        showConfirmationDialog(
+          context,
+          message: 'Change delivery status?',
+          confirmFunction: () {
+            showLoadingDialog(context);
+
+            db
+                .orderDocument(order.id!)
+                .update({'status': OrderStatus.delivered.index}).then(
+              (value) {
+                Navigator.pop(context);
+
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    String? comment;
+                    double rating = 2.5;
+
+                    return AlertDialog(
+                      title: const Text('Rate us'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          RatingBar(
+                              ratingWidget: RatingWidget(
+                                full: const Icon(
+                                  Icons.star,
+                                  color: Colors.yellow,
+                                ),
+                                half: const Icon(
+                                  Icons.star_half,
+                                  color: Colors.yellow,
+                                ),
+                                empty: const Icon(
+                                  Icons.star_outline,
+                                  color: Colors.yellow,
+                                ),
+                              ),
+                              initialRating: rating,
+                              allowHalfRating: true,
+                              onRatingUpdate: (value) {
+                                rating = value;
+                              }),
+                          const SizedBox(height: 10),
+                          TextField(
+                            decoration: const InputDecoration(
+                                hintText: 'Leave a comment'),
+                            onChanged: (value) {
+                              comment = value.trim();
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                              onPressed: () {
+                                db.instance.collection('reviews').add(Review(
+                                      comment: comment,
+                                      rating: rating,
+                                      dateTime: DateTime.now(),
+                                      userId: FirebaseAuth
+                                          .instance.currentUser!.uid,
+                                      orderId: order.id,
+                                    ).toMap());
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Done')),
+                        ],
+                      ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                    );
+                  },
+                );
+              },
+            );
+          },
+        );
+      },
+      child: const Text(
+        'Delivered',
+        style: TextStyle(color: Colors.green),
+      ),
+    );
+  }
+
+  TextButton cancelButton(context, FirestoreService db) {
+    return TextButton(
+      style: TextButton.styleFrom(
+          fixedSize: Size(kScreenWidth(context) - 72, 48),
+          backgroundColor: Colors.red.withOpacity(.3),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+      onPressed: () async {
+        showConfirmationDialog(
+          context,
+          message: 'Cancel order?',
+          confirmFunction: () {
+            db
+                .orderDocument(order.id!)
+                .update({'status': OrderStatus.canceled.index});
+          },
+        );
+      },
+      child: const Text(
+        'Cancel order',
+        style: TextStyle(color: Colors.red),
       ),
     );
   }

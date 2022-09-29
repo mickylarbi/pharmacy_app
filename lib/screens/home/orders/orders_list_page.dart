@@ -32,6 +32,7 @@ class OrdersListPage extends StatelessWidget {
             (a, b) => '${a.dateTime}${a.status}'
                 .compareTo('${b.dateTime}${b.status}'),
           );
+          ordersList = ordersList.reversed.toList();
 
           List<Order> currentOrdersList = ordersList
               .where((element) =>

@@ -64,7 +64,7 @@ class PharmaciesSearchDelegate extends SearchDelegate {
       separatorBuilder: (context, index) => const SizedBox(height: 14),
       itemBuilder: (context, index) => PharmacyCard(
           pharmacy: searchHits[index],
-          drugsList: drugListGlobal!
+          drugsList: drugListGlobal
               .where((element) => element.pharmacyId == searchHits[index].id)
               .toList()),
     );

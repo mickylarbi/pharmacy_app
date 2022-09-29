@@ -201,7 +201,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 TextButton(
                   style: TextButton.styleFrom(
                       fixedSize: Size(kScreenWidth(context) - 72, 48),
-                      backgroundColor: Colors.pink.withOpacity(.1),
+                      backgroundColor: Colors.pink.withOpacity(.2),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14))),
                   onPressed: () async {
