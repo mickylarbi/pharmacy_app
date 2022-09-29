@@ -7,7 +7,7 @@ import 'package:pharmacy_app/models/drug.dart';
 import 'package:pharmacy_app/models/order.dart';
 import 'package:pharmacy_app/models/patient.dart';
 import 'package:pharmacy_app/screens/home/drugs/drug_details_screen.dart';
-import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
 import 'package:pharmacy_app/screens/home/profile/profile_screen.dart';
 import 'package:pharmacy_app/screens/manage_pharmacy/manage_orders/orders_list_page.dart';
 import 'package:pharmacy_app/utils/constants.dart';
@@ -26,42 +26,40 @@ class OrderDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         title: Text(order.id!),
-              actions: [
-                StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                    stream: db.orderDocument(order.id!).snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return const SizedBox();
-                      }
+        title: Text(order.id!),
+        actions: [
+          StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+              stream: db.orderDocument(order.id!).snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const SizedBox();
+                }
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator.adaptive();
-                      }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator.adaptive();
+                }
 
-                      Order currentOrder = Order.fromFirestore(
-                          snapshot.data!.data()!, snapshot.data!.id);
+                Order currentOrder = Order.fromFirestore(
+                    snapshot.data!.data()!, snapshot.data!.id);
 
-                      return GestureDetector(
-                        onTap: () {
-                          showAlertDialog(context,
-                              message: orderStatusMessage(currentOrder.status!),
-                              icon: Icons.info_rounded,
-                              iconColor: Colors.blue);
-                        },
-                        child: CircleAvatar(
-                          backgroundColor:
-                              orderStatusColor(currentOrder.status!),
-                          radius: 14,
-                          child: Icon(
-                            orderStatusIconData(currentOrder.status!),
-                            color: Colors.white,
-                          ),
-                        ),
-                      );
-                    }),
-              ],
-           
+                return GestureDetector(
+                  onTap: () {
+                    showAlertDialog(context,
+                        message: orderStatusMessage(currentOrder.status!),
+                        icon: Icons.info_rounded,
+                        iconColor: Colors.blue);
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: orderStatusColor(currentOrder.status!),
+                    radius: 14,
+                    child: Icon(
+                      orderStatusIconData(currentOrder.status!),
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }),
+        ],
       ),
       body: SafeArea(
         child: Stack(
@@ -284,7 +282,7 @@ class OrderDetailsScreen extends StatelessWidget {
                             ProfileImageWidget(
                               height: 100,
                               width: 100,
-                              patientId: order.patientId,
+                              userId: order.patientId,
                             ),
                             const SizedBox(height: 20),
                             Text(patient.name),
@@ -362,7 +360,6 @@ class OrderDetailsScreen extends StatelessWidget {
                 )
               ],
             ),
-           
           ],
         ),
       ),

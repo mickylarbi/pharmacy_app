@@ -5,7 +5,7 @@ import 'package:pharmacy_app/firebase/firestore.dart';
 import 'package:pharmacy_app/models/drug.dart';
 import 'package:pharmacy_app/models/order.dart';
 import 'package:pharmacy_app/screens/home/drugs/drug_details_screen.dart';
-import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
 import 'package:pharmacy_app/utils/constants.dart';
 import 'package:pharmacy_app/utils/dialogs.dart';
 import 'package:pharmacy_app/utils/functions.dart';

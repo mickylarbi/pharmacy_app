@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmacy_app/firebase/firestore.dart';
 import 'package:pharmacy_app/firebase/storage.dart';
 import 'package:pharmacy_app/models/drug.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
 import 'package:pharmacy_app/screens/manage_pharmacy/manage_drugs/edit_drug_details_screen.dart';
 import 'package:pharmacy_app/utils/functions.dart';
 
@@ -157,57 +158,3 @@ class DrugCard extends StatelessWidget {
   }
 }
 
-class DrugImageWidget extends StatelessWidget {
-  final String drugId;
-  final double? height;
-  final double? width;
-  DrugImageWidget({super.key, required this.drugId, this.height, this.width});
-
-  StorageService storage = StorageService();
-
-  @override
-  Widget build(BuildContext context) {
-    return StatefulBuilder(
-      builder: (BuildContext context, setState) {
-        return FutureBuilder(
-          future: storage.drugImageDownloadUrl(drugId),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasError) {
-              return Center(
-                child: IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () {
-                    setState(() {});
-                  },
-                ),
-              );
-            }
-
-            if (snapshot.connectionState == ConnectionState.done) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: CachedNetworkImage(
-                  imageUrl: snapshot.data!,
-                  height: height,
-                  width: width ?? double.maxFinite,
-                  fit: BoxFit.fitWidth,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      Center(
-                    child: CircularProgressIndicator.adaptive(
-                        value: downloadProgress.progress),
-                  ),
-                  errorWidget: (context, url, error) =>
-                      const Center(child: Icon(Icons.person)),
-                ),
-              );
-            }
-
-            return const Center(
-              child: CircularProgressIndicator.adaptive(),
-            );
-          },
-        );
-      },
-    );
-  }
-}

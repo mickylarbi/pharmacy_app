@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacy_app/models/drug.dart';
 import 'package:pharmacy_app/screens/home/checkout/checkout_page.dart';
-import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
 import 'package:pharmacy_app/utils/constants.dart';
 
 class DrugDetailsScreen extends StatelessWidget {

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacy_app/models/drug.dart';
-import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
 
 class DrugsSearchDelegate extends SearchDelegate {
+  final List<Drug>? pharmacyDrugsList;
+  DrugsSearchDelegate({this.pharmacyDrugsList});
+
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -50,21 +53,21 @@ class DrugsSearchDelegate extends SearchDelegate {
 
   Widget body() {
     List<Drug> drugsList = [];
-    List<Drug> temp = drugsListNotifier.value
+    List<Drug> temp = (pharmacyDrugsList ?? drugsListNotifier.value)
         .where((element) =>
             element.brandName!.toLowerCase().contains(query.toLowerCase()))
         .toList();
     temp.sort((a, b) => a.brandName!.compareTo(b.brandName!));
     drugsList.addAll(temp);
 
-    temp = drugsListNotifier.value
+    temp = (pharmacyDrugsList ?? drugsListNotifier.value)
         .where((element) =>
             element.genericName!.toLowerCase().contains(query.toLowerCase()))
         .toList();
     temp.sort((a, b) => a.genericName!.compareTo(b.genericName!));
     drugsList.addAll(temp.where((element) => !drugsList.contains(element)));
 
-    temp = drugsListNotifier.value
+    temp = (pharmacyDrugsList ?? drugsListNotifier.value)
         .where((element) =>
             element.group!.toLowerCase().contains(query.toLowerCase()))
         .toList();

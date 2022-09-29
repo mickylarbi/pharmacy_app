@@ -114,7 +114,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                           if (result != null) {
                             showLoadingDialog(context);
-                            db.patientDocument()
+                            db
+                                .patientDocument()
                                 .update({'firstName': result})
                                 .timeout(ktimeout)
                                 .then((value) {
@@ -141,7 +142,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                           if (result != null) {
                             showLoadingDialog(context);
-                            db.patientDocument()
+                            db
+                                .patientDocument()
                                 .update({'surname': result})
                                 .timeout(ktimeout)
                                 .then((value) {
@@ -168,7 +170,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                           if (result != null) {
                             showLoadingDialog(context);
-                            db.patientDocument()
+                            db
+                                .patientDocument()
                                 .update({'phone': result})
                                 .timeout(ktimeout)
                                 .then((value) {
@@ -234,75 +237,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-
 class ProfileImageWidget extends StatelessWidget {
+  final String? userId;
+  final double? height;
+  final double? width;
+  final double? borderRadius;
+
   ProfileImageWidget({
     Key? key,
-    this.patientId,
-    required this.height,
-    required this.width,
+    this.userId,
+    this.height,
+    this.width,
     this.borderRadius,
   }) : super(key: key);
 
+  AuthService auth = AuthService();
   StorageService storage = StorageService();
-  final String? patientId;
-  final double height;
-  final double width;
-  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: borderRadius ?? BorderRadius.circular(20),
-      child: Container(
-        height: height,
-        width: width,
-        alignment: Alignment.center,
-        color: Colors.grey.withOpacity(.1),
-        child: StatefulBuilder(builder: (context, setState) {
-          return FutureBuilder<String>(
-            future: storage.profileImageDownloadUrl(patientId),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return GestureDetector(
-                  onTap: () async {
+    return StatefulBuilder(builder: (context, setState) {
+      return FutureBuilder<String>(
+        future: storage.profileImageDownloadUrl(userId),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return SizedBox(
+              height: height,
+              width: width,
+              child: Center(
+                child: IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
                     setState(() {});
                   },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text(
-                        'Tap to reload',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      Icon(
-                        Icons.refresh,
-                        color: Colors.grey,
-                      )
-                    ],
-                  ),
-                );
-              }
-              if (snapshot.connectionState == ConnectionState.done) {
-                return CachedNetworkImage(
-                  imageUrl: snapshot.data!,
-                  height: height,
-                  width: width,
-                  fit: BoxFit.cover,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      Center(
-                    child: CircularProgressIndicator.adaptive(
-                        value: downloadProgress.progress),
-                  ),
-                  errorWidget: (context, url, error) =>
-                      const Center(child: Icon(Icons.person)),
-                );
-              }
-              return const Center(child: CircularProgressIndicator.adaptive());
-            },
-          );
-        }),
-      ),
-    );
+                ),
+              ),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(borderRadius ?? 14),
+              child: CachedNetworkImage(
+                imageUrl: snapshot.data!,
+                height: height,
+                width: width,
+                fit: BoxFit.cover,
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    Center(
+                  child: CircularProgressIndicator.adaptive(
+                      value: downloadProgress.progress),
+                ),
+                errorWidget: (context, url, error) =>
+                    const Center(child: Icon(Icons.person)),
+              ),
+            );
+          }
+          return SizedBox(
+              height: height,
+              width: width,
+              child: const Center(child: CircularProgressIndicator.adaptive()));
+        },
+      );
+    });
   }
 }

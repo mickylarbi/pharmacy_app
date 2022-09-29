@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacy_app/models/drug.dart';
-import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_search_delegate.dart';
 import 'package:pharmacy_app/screens/manage_pharmacy/manage_drugs/pharmacy_drugs_list_page.dart';
 import 'package:pharmacy_app/screens/manage_pharmacy/manage_drugs/edit_drug_details_screen.dart';

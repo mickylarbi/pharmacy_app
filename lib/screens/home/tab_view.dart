@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pharmacy_app/firebase/auth.dart';
 import 'package:pharmacy_app/models/drug.dart';
 import 'package:pharmacy_app/models/order.dart';
 import 'package:pharmacy_app/screens/home/checkout/checkout_page.dart';
-import 'package:pharmacy_app/screens/home/drugs/drugs_list_page.dart';
-import 'package:pharmacy_app/screens/home/drugs/drugs_search_delegate.dart';
+import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
+import 'package:pharmacy_app/screens/home/drugs/pharmacies_list_page.dart';
 import 'package:pharmacy_app/screens/home/orders/order_history_screen.dart';
 import 'package:pharmacy_app/screens/home/orders/orders_list_page.dart';
 import 'package:pharmacy_app/screens/home/profile/profile_screen.dart';
-import 'package:pharmacy_app/utils/constants.dart';
 import 'package:pharmacy_app/utils/dialogs.dart';
 import 'package:pharmacy_app/utils/functions.dart';
 
@@ -54,14 +52,7 @@ class _TabViewState extends State<TabView> {
                     },
                     icon: const Icon(Icons.history),
                   ),
-                if (value == 1)
-                  IconButton(
-                    onPressed: () {
-                      showSearch(
-                          context: context, delegate: DrugsSearchDelegate());
-                    },
-                    icon: const Icon(Icons.search),
-                  ),
+                
                 if (value == 1)
                   PopupMenuButton(
                     icon: const Icon(Icons.sort),
@@ -163,7 +154,7 @@ class _TabViewState extends State<TabView> {
               physics: const NeverScrollableScrollPhysics(),
               children: const [
                 OrdersListPage(),
-                DrugsPage(),
+                PharmaciesListPage(),
                 CheckoutPage(),
                 ProfileScreen()
               ],
