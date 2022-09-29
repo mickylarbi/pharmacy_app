@@ -4,6 +4,7 @@ import 'package:pharmacy_app/models/order.dart';
 import 'package:pharmacy_app/screens/home/checkout/checkout_page.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
 import 'package:pharmacy_app/screens/home/drugs/pharmacies_list_page.dart';
+import 'package:pharmacy_app/screens/home/drugs/pharmacies_search_delegate.dart';
 import 'package:pharmacy_app/screens/home/orders/order_history_screen.dart';
 import 'package:pharmacy_app/screens/home/orders/orders_list_page.dart';
 import 'package:pharmacy_app/screens/home/profile/profile_screen.dart';
@@ -52,73 +53,31 @@ class _TabViewState extends State<TabView> {
                     },
                     icon: const Icon(Icons.history),
                   ),
-                
                 if (value == 1)
-                  PopupMenuButton(
-                    icon: const Icon(Icons.sort),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Sort by',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            ListTile(
-                              title: const Text('Brand name'),
-                              onTap: () {
-                                List<Drug> temp = drugsListNotifier.value;
-                                temp.sort(((a, b) =>
-                                    a.brandName!.compareTo(b.brandName!)));
-
-                                drugsListNotifier.value = [...temp];
-                                Navigator.pop(context);
-                              },
-                            ),
-                            ListTile(
-                              title: const Text('Generic name'),
-                              onTap: () {
-                                List<Drug> temp = drugsListNotifier.value;
-                                temp.sort(((a, b) =>
-                                    a.genericName!.compareTo(b.genericName!)));
-
-                                drugsListNotifier.value = [...temp];
-                                Navigator.pop(context);
-                              },
-                            ),
-                            ListTile(
-                              title: const Text('Class'),
-                              onTap: () {
-                                List<Drug> temp = drugsListNotifier.value;
-                                temp.sort(
-                                    ((a, b) => a.group!.compareTo(b.group!)));
-
-                                drugsListNotifier.value = [...temp];
-                                Navigator.pop(context);
-                              },
-                            ),
-                            ListTile(
-                              title: const Text('Price'),
-                              onTap: () {
-                                List<Drug> temp = drugsListNotifier.value;
-                                temp.sort(
-                                    ((a, b) => a.price!.compareTo(b.price!)));
-
-                                drugsListNotifier.value = [...temp];
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+                  IconButton(
+                    onPressed: () {
+                      if (pharmaciesList.isNotEmpty) {
+                        showSearch(
+                            context: context,
+                            delegate: PharmaciesSearchDelegate());
+                      } else {
+                        showAlertDialog(context,
+                            message: 'No pharmacies to search');
+                      }
+                    },
+                    icon: const Icon(Icons.search),
+                  ),
+                if (value == 1)
+                  IconButton(
+                    onPressed: () {
+                      if (pharmaciesList.isNotEmpty) {
+                        
+                      } else {
+                        showAlertDialog(context,
+                            message: 'No pharmacies to show');
+                      }
+                    },
+                    icon: const Icon(Icons.location_pin),
                   ),
                 if (value == 2)
                   ValueListenableBuilder<Map<Drug, int>>(
@@ -186,7 +145,7 @@ class _TabViewState extends State<TabView> {
       case 0:
         return 'Orders';
       case 1:
-        return 'Drugs';
+        return 'Pharmacies';
       case 2:
         return 'Checkout';
       case 3:

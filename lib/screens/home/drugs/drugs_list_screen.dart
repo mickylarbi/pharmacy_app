@@ -20,7 +20,7 @@ class DrugsListscreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Drug> drugsList = [];
+    List<Drug> drugsList = pharmacyDrugsList;
 
     return Scaffold(
       body: CustomScrollView(
@@ -61,98 +61,100 @@ class DrugsListscreen extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20),
-                    child: Row(children: [
-                      const Text('Drugs'),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          showSearch(
-                              context: context,
-                              delegate: DrugsSearchDelegate(
-                                  pharmacyDrugsList: pharmacyDrugsList));
-                        },
-                        icon: const Icon(Icons.search),
-                      ),
-                      PopupMenuButton(
-                        icon: const Icon(Icons.sort),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14)),
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Sort by',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.bold,
+                    child: Row(
+                      children: [
+                        const Text('Drugs'),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () {
+                            showSearch(
+                                context: context,
+                                delegate: DrugsSearchDelegate(
+                                    pharmacyDrugsList: pharmacyDrugsList));
+                          },
+                          icon: const Icon(Icons.search),
+                        ),
+                        PopupMenuButton(
+                          icon: const Icon(Icons.sort),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14)),
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Sort by',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 10),
-                                ListTile(
-                                  title: const Text('Brand name'),
-                                  onTap: () {
-                                    List<Drug> temp = drugsList;
-                                    temp.sort(((a, b) =>
-                                        a.brandName!.compareTo(b.brandName!)));
+                                  const SizedBox(height: 10),
+                                  ListTile(
+                                    title: const Text('Brand name'),
+                                    onTap: () {
+                                      List<Drug> temp = drugsList;
+                                      temp.sort(((a, b) => a.brandName!
+                                          .compareTo(b.brandName!)));
 
-                                    drugsList = [...temp];
-                                    Navigator.pop(context);
-                                    setState(() {});
-                                  },
-                                ),
-                                ListTile(
-                                  title: const Text('Generic name'),
-                                  onTap: () {
-                                    List<Drug> temp = drugsList;
-                                    temp.sort(((a, b) => a.genericName!
-                                        .compareTo(b.genericName!)));
+                                      drugsList = [...temp];
+                                      Navigator.pop(context);
+                                      setState(() {});
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: const Text('Generic name'),
+                                    onTap: () {
+                                      List<Drug> temp = drugsList;
+                                      temp.sort(((a, b) => a.genericName!
+                                          .compareTo(b.genericName!)));
 
-                                    drugsList = [...temp];
-                                    Navigator.pop(context);
-                                    setState(() {});
-                                  },
-                                ),
-                                ListTile(
-                                  title: const Text('Class'),
-                                  onTap: () {
-                                    List<Drug> temp = drugsList;
-                                    temp.sort(((a, b) =>
-                                        a.group!.compareTo(b.group!)));
+                                      drugsList = [...temp];
+                                      Navigator.pop(context);
+                                      setState(() {});
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: const Text('Class'),
+                                    onTap: () {
+                                      List<Drug> temp = drugsList;
+                                      temp.sort(((a, b) =>
+                                          a.group!.compareTo(b.group!)));
 
-                                    drugsList = [...temp];
-                                    Navigator.pop(context);
-                                    setState(() {});
-                                  },
-                                ),
-                                ListTile(
-                                  title: const Text('Price'),
-                                  onTap: () {
-                                    List<Drug> temp = drugsList;
-                                    temp.sort(((a, b) =>
-                                        a.price!.compareTo(b.price!)));
+                                      drugsList = [...temp];
+                                      Navigator.pop(context);
+                                      setState(() {});
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: const Text('Price'),
+                                    onTap: () {
+                                      List<Drug> temp = drugsList;
+                                      temp.sort(((a, b) =>
+                                          a.price!.compareTo(b.price!)));
 
-                                    drugsList = [...temp];
-                                    Navigator.pop(context);
-                                    setState(() {});
-                                  },
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ]),
+                                      drugsList = [...temp];
+                                      Navigator.pop(context);
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   ListView.separated(
                     padding: const EdgeInsets.all(20),
                     shrinkWrap: true,
                     primary: false,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: pharmacyDrugsList.length,
+                    itemCount: drugsList.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return DrugCard(drug: pharmacyDrugsList[index]);
+                      return DrugCard(drug: drugsList[index]);
                     },
                     separatorBuilder: (BuildContext context, int index) {
                       return const SizedBox(height: 20);
@@ -256,7 +258,7 @@ class DrugCard extends StatelessWidget {
                               style: TextStyle(
                                 color: value.keys.contains(drug)
                                     ? Colors.orange
-                                    : null,
+                                    : Colors.green,
                               ),
                             ),
                           );
@@ -270,7 +272,6 @@ class DrugCard extends StatelessWidget {
     );
   }
 }
-
 
 class DrugImageWidget extends StatelessWidget {
   final String drugId;

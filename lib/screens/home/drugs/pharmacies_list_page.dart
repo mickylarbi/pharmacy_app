@@ -1,11 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:pharmacy_app/firebase/firestore.dart';
 import 'package:pharmacy_app/models/drug.dart';
 import 'package:pharmacy_app/models/pharmacy.dart';
-import 'package:pharmacy_app/screens/home/drugs/drug_details_screen.dart';
 import 'package:pharmacy_app/screens/home/drugs/drugs_list_screen.dart';
 import 'package:pharmacy_app/screens/home/profile/profile_screen.dart';
 import 'package:pharmacy_app/utils/functions.dart';
@@ -41,6 +38,8 @@ class PharmaciesListPage extends StatelessWidget {
           drugsList = snapshot.data!.docs
               .map((e) => Drug.fromFirestore(e.data(), e.id))
               .toList();
+
+          drugListGlobal = drugsList;
 
           if (drugsList.isEmpty) {
             return const Center(
@@ -78,6 +77,10 @@ class PharmaciesListPage extends StatelessWidget {
                       if (snapshot.connectionState == ConnectionState.done) {
                         Pharmacy pharmacy = Pharmacy.fromFirestore(
                             snapshot.data!.data()!, snapshot.data!.id);
+
+                        if (!pharmaciesList.contains(pharmacy)) {
+                          pharmaciesList.add(pharmacy);
+                        }
 
                         return PharmacyCard(
                           pharmacy: pharmacy,
@@ -138,3 +141,6 @@ class PharmacyCard extends StatelessWidget {
     );
   }
 }
+
+List<Pharmacy> pharmaciesList = [];
+List<Drug>? drugListGlobal;
