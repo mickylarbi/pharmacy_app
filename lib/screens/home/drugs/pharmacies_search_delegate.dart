@@ -51,7 +51,8 @@ class PharmaciesSearchDelegate extends SearchDelegate {
   Widget body() {
     List<Pharmacy> searchHits = pharmaciesList
         .where(
-          (element) => element.name!.contains(query),
+          (element) =>
+              element.name!.toLowerCase().contains(query.toLowerCase()),
         )
         .toList();
 

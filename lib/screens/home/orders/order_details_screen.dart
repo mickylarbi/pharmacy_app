@@ -228,72 +228,76 @@ class OrderDetailsScreen extends StatelessWidget {
 
             db
                 .orderDocument(order.id!)
-                .update({'status': OrderStatus.delivered.index}).then(
-              (value) {
-                Navigator.pop(context);
+                .update({'status': OrderStatus.delivered.index})
+                .timeout(ktimeout)
+                .then(
+                  (value) {
+                    Navigator.pop(context);
 
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    String? comment;
-                    double rating = 2.5;
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        String? comment;
+                        double rating = 2.5;
 
-                    return AlertDialog(
-                      title: const Text('Rate us'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          RatingBar(
-                              ratingWidget: RatingWidget(
-                                full: const Icon(
-                                  Icons.star,
-                                  color: Colors.yellow,
-                                ),
-                                half: const Icon(
-                                  Icons.star_half,
-                                  color: Colors.yellow,
-                                ),
-                                empty: const Icon(
-                                  Icons.star_outline,
-                                  color: Colors.yellow,
-                                ),
+                        return AlertDialog(
+                          title: const Text('Rate us'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              RatingBar(
+                                  ratingWidget: RatingWidget(
+                                    full: const Icon(
+                                      Icons.star,
+                                      color: Colors.yellow,
+                                    ),
+                                    half: const Icon(
+                                      Icons.star_half,
+                                      color: Colors.yellow,
+                                    ),
+                                    empty: const Icon(
+                                      Icons.star_outline,
+                                      color: Colors.yellow,
+                                    ),
+                                  ),
+                                  initialRating: rating,
+                                  allowHalfRating: true,
+                                  onRatingUpdate: (value) {
+                                    rating = value;
+                                  }),
+                              const SizedBox(height: 10),
+                              TextField(
+                                decoration: const InputDecoration(
+                                    hintText: 'Leave a comment'),
+                                onChanged: (value) {
+                                  comment = value.trim();
+                                },
                               ),
-                              initialRating: rating,
-                              allowHalfRating: true,
-                              onRatingUpdate: (value) {
-                                rating = value;
-                              }),
-                          const SizedBox(height: 10),
-                          TextField(
-                            decoration: const InputDecoration(
-                                hintText: 'Leave a comment'),
-                            onChanged: (value) {
-                              comment = value.trim();
-                            },
+                              const SizedBox(height: 10),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    db.instance
+                                        .collection('reviews')
+                                        .add(Review(
+                                          comment: comment,
+                                          rating: rating,
+                                          dateTime: DateTime.now(),
+                                          userId: FirebaseAuth
+                                              .instance.currentUser!.uid,
+                                          orderId: order.id,
+                                        ).toMap());
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Done')),
+                            ],
                           ),
-                          const SizedBox(height: 10),
-                          ElevatedButton(
-                              onPressed: () {
-                                db.instance.collection('reviews').add(Review(
-                                      comment: comment,
-                                      rating: rating,
-                                      dateTime: DateTime.now(),
-                                      userId: FirebaseAuth
-                                          .instance.currentUser!.uid,
-                                      orderId: order.id,
-                                    ).toMap());
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Done')),
-                        ],
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                        );
+                      },
                     );
                   },
                 );
-              },
-            );
           },
         );
       },
@@ -316,9 +320,19 @@ class OrderDetailsScreen extends StatelessWidget {
           context,
           message: 'Cancel order?',
           confirmFunction: () {
+            showLoadingDialog(context);
             db
                 .orderDocument(order.id!)
-                .update({'status': OrderStatus.canceled.index});
+                .update({'status': OrderStatus.canceled.index})
+                .timeout(ktimeout)
+                .then((value) {
+                  Navigator.pop(context);
+                })
+                .onError((error, stackTrace) {
+                  Navigator.pop(context);
+                  showAlertDialog(context,
+                      message: 'Error canceling appointment');
+                });
           },
         );
       },

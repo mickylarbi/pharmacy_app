@@ -10,6 +10,7 @@ import 'package:pharmacy_app/screens/home/orders/order_history_screen.dart';
 import 'package:pharmacy_app/screens/home/orders/orders_list_page.dart';
 import 'package:pharmacy_app/screens/home/orders/reviews_screen.dart';
 import 'package:pharmacy_app/screens/home/profile/profile_screen.dart';
+import 'package:pharmacy_app/utils/constants.dart';
 import 'package:pharmacy_app/utils/dialogs.dart';
 import 'package:pharmacy_app/utils/functions.dart';
 
@@ -78,14 +79,23 @@ class _TabViewState extends State<TabView> {
                   ),
                 if (value == 1)
                   IconButton(
-                    onPressed: () async {
+                    onPressed: () {
                       if (pharmaciesList.isNotEmpty) {
-                        navigate(
-                            context,
-                            NearbyPharmaciesScreen(
-                              currentLocation: await getCurrentLocation(),
-                            ));
+                        showLoadingDialog(context);
+                        getCurrentLocation().timeout(ktimeout).then((value) {
+                          Navigator.pop(context);
+                          navigate(
+                              context,
+                              NearbyPharmaciesScreen(
+                                currentLocation: value,
+                              ));
+                        }).onError((error, stacktrace) {
+                          Navigator.pop(context);
+                          showAlertDialog(context,
+                              message: 'Could not get current location');
+                        });
                       } else {
+                        Navigator.pop(context);
                         showAlertDialog(context,
                             message: 'No pharmacies to show');
                       }

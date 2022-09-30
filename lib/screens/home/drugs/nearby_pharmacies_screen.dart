@@ -168,7 +168,7 @@ class _NearbyPharmaciesScreenState extends State<NearbyPharmaciesScreen> {
   }
 }
 
-getCurrentLocation() async {
+Future getCurrentLocation() async {
   bool? serviceEnabled;
   LocationPermission permission;
 

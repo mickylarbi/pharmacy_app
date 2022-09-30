@@ -257,8 +257,23 @@ class OrderDetailsScreen extends StatelessWidget {
                                   context,
                                   message: 'Set delivery status to enroute?',
                                   confirmFunction: () {
-                                    db.orderDocument(order.id!).update(
-                                        {'status': OrderStatus.enroute.index});
+                                    showLoadingDialog(context);
+
+                                    db
+                                        .orderDocument(order.id!)
+                                        .update({
+                                          'status': OrderStatus.enroute.index
+                                        })
+                                        .timeout(ktimeout)
+                                        .then((value) {
+                                          Navigator.pop(context);
+                                        })
+                                        .onError((error, stackTrace) {
+                                          Navigator.pop(context);
+                                          showAlertDialog(context,
+                                              message:
+                                                  'Error updating delivery status');
+                                        });
                                   },
                                 );
                               },
